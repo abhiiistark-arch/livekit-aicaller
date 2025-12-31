@@ -1,0 +1,14 @@
+# sip-config.yaml
+api:
+  key: localagent
+  secret: MyOwnSecretKeyForLocalTestingOnly2025_1234567890abcdef
+
+redis:
+  address: redis:6379
+
+sip:
+  listen_addr: ":5060"
+  rtp_port_range: "10000-20000"
+
+log:
+  level: info

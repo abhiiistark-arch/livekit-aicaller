@@ -1,0 +1,33 @@
+# docker-compose.yml
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"  # Optional
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --dev --redis-host redis:6379
+    ports:
+      - "7880:7880"
+      - "7881:7881/udp"
+    environment:
+      LIVEKIT_KEYS: "localagent: MyOwnSecretKeyForLocalTestingOnly2025_1234567890abcdef"  # space after :
+
+  sip:
+    image: livekit/sip:latest
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "5060:5060"
+      - "10000-10100:10000-10100/udp"  # Small RTP range for fast startup (100 ports enough for testing)
+    environment:
+      LIVEKIT_URL: ws://livekit:7880
+      LIVEKIT_API_KEY: localagent
+      LIVEKIT_API_SECRET: MyOwnSecretKeyForLocalTestingOnly2025_1234567890abcdef
+      REDIS_ADDR: redis:6379
+      LOG_LEVEL: info
+    volumes:
+      - ./sip-config.yaml:/sip/config.yaml
+    depends_on:
+      - livekit
